@@ -1,26 +1,27 @@
 package com.vibhuti.recipeSharing.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "recipe")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 public class RecipeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long recipeId;
 
     private String recipeName;
 
-    @ManyToOne
-    private RecipeTagsEntity recipeTags;
+    @OneToMany(mappedBy = "recipe")
+    private Set<RecipeTagsEntity> recipeTags;
 
     private String recipeFileLocation;
 

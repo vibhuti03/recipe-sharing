@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,18 +34,27 @@ public class RecipeController {
 
     @PostMapping("recipe-intake")
     public ResponseEntity<Object> recipeIntake(@RequestParam("recipeName") String recipeName,
-//                                               @RequestParam("recipeTags") String recipeTags,
+                                               @RequestParam("recipeTags") List<String> recipeTags,
                                                @RequestParam("recipe") MultipartFile recipeFile) throws IOException {
         String fileName = System.currentTimeMillis() + recipeFile.getOriginalFilename();
         FileUploadUtils.saveFile(uploadDir, fileName, recipeFile);
 
+        Set<RecipeTagsEntity> recipeTagsEntitySet = new HashSet<RecipeTagsEntity>();
+
         RecipeEntity recipe = recipeRepository.save(RecipeEntity.builder()
-                        .recipeName(recipeName)
-//                        .recipeTags(recipeTagsRepository.save(RecipeTagsEntity.builder()
-//                                .tagName(recipeTags)
-//                                .build()))
-                        .recipeFileLocation(uploadDir + fileName)
+                .recipeName(recipeName)
+                .recipeFileLocation(uploadDir + fileName)
                 .build());
+
+        for (String tags : recipeTags) {
+            RecipeTagsEntity recipeTagsEntity = recipeTagsRepository.save(RecipeTagsEntity.builder()
+                    .tagName(tags)
+                    .recipe(recipe)
+                    .build());
+            recipeTagsEntitySet.add(recipeTagsEntity);
+        }
+
+        recipe.setRecipeTags(recipeTagsEntitySet);
 
 
         if(recipe!=null){
