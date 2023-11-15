@@ -1,7 +1,7 @@
 package com.vibhuti.recipeSharing.controller;
 
 import com.vibhuti.recipeSharing.entity.RecipeEntity;
-import com.vibhuti.recipeSharing.entity.RecipeTagsEntity;
+import com.vibhuti.recipeSharing.entity.TagsEntity;
 import com.vibhuti.recipeSharing.repositories.RecipeRepository;
 import com.vibhuti.recipeSharing.repositories.RecipeTagsRepository;
 import com.vibhuti.recipeSharing.utils.FileUploadUtils;
@@ -9,10 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,31 +30,49 @@ public class RecipeController {
     private final String uploadDir = "/Volumes/SanDisk1/Learnings/recipes/";
 
     @PostMapping("recipe-intake")
-    public ResponseEntity<Object> recipeIntake(@RequestParam("recipeName") String recipeName,
+    public ResponseEntity<Object> recipeIntake(
+//            @RequestParam RecipeEntity recipe,
+                                                @RequestParam("recipeName") String recipeName,
                                                @RequestParam("recipeTags") List<String> recipeTags,
                                                @RequestParam("recipe") MultipartFile recipeFile) throws IOException {
         String fileName = System.currentTimeMillis() + recipeFile.getOriginalFilename();
         FileUploadUtils.saveFile(uploadDir, fileName, recipeFile);
 
-        Set<RecipeTagsEntity> recipeTagsEntitySet = new HashSet<RecipeTagsEntity>();
-
-        RecipeEntity recipe = recipeRepository.save(RecipeEntity.builder()
-                .recipeName(recipeName)
-                .recipeFileLocation(uploadDir + fileName)
-                .build());
-
+        Set<TagsEntity> recipeTagsEntitySet = new HashSet<TagsEntity>();
         for (String tags : recipeTags) {
-            RecipeTagsEntity recipeTagsEntity = recipeTagsRepository.save(RecipeTagsEntity.builder()
+            TagsEntity recipeTagsEntity = TagsEntity.builder()
                     .tagName(tags)
-                    .recipe(recipe)
-                    .build());
+                    .build();
             recipeTagsEntitySet.add(recipeTagsEntity);
         }
 
-        recipe.setRecipeTags(recipeTagsEntitySet);
+        RecipeEntity recipe = RecipeEntity.builder()
+                .recipeName(recipeName)
+                .recipeFileLocation(uploadDir+fileName)
+                .tags(recipeTagsEntitySet)
+                .build();
+
+        RecipeEntity savedRecipe = recipeRepository.save(recipe);
+
+//        Set<TagsEntity> recipeTagsEntitySet = new HashSet<TagsEntity>();
+//
+//        RecipeEntity recipe = recipeRepository.save(RecipeEntity.builder()
+//                .recipeName(recipeName)
+//                .recipeFileLocation(uploadDir + fileName)
+//                .build());
+//
+//        for (String tags : recipeTags) {
+//            TagsEntity recipeTagsEntity = recipeTagsRepository.save(TagsEntity.builder()
+//                    .tagName(tags)
+//                    .recipe(recipe)
+//                    .build());
+//            recipeTagsEntitySet.add(recipeTagsEntity);
+//        }
+//
+//        recipe.setRecipeTags(recipeTagsEntitySet);
 
 
-        if(recipe!=null){
+        if(savedRecipe!=null){
             return ResponseEntity.accepted().body("Recipe Uploaded");
         }
         return ResponseEntity.internalServerError().build();

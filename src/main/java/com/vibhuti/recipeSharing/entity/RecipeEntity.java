@@ -16,12 +16,19 @@ public class RecipeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long recipeId;
+    private Long id;
 
     private String recipeName;
 
-    @OneToMany(mappedBy = "recipe")
-    private Set<RecipeTagsEntity> recipeTags;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "recipe_tags_map",
+    joinColumns = {
+            @JoinColumn(name = "recipe_id", referencedColumnName = "id")
+    },
+    inverseJoinColumns = {
+            @JoinColumn(name = "tag_id", referencedColumnName = "id")
+    })
+    private Set<TagsEntity> tags;
 
     private String recipeFileLocation;
 
