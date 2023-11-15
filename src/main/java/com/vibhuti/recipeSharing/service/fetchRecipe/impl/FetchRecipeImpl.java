@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,16 +22,10 @@ public class FetchRecipeImpl implements FetchRecipe {
     public List<String> fetchAllRecipe() {
 
         List<RecipeEntity> recipeEntityList = recipeRepository.findAll();
+        return recipeEntityList.stream()
+                .map(r -> r.getRecipeName())
+                .collect(Collectors.toList());
 
-        List<String> allRecipeNames = new ArrayList<>();
-        for(RecipeEntity recipe : recipeEntityList){
-            allRecipeNames.add(recipe.getRecipeName());
-        }
-
-//        recipeEntityList.stream()
-//                .map(r -> allRecipeNames.add(r.getRecipeName()));
-
-        return allRecipeNames;
     }
 
     @Override
