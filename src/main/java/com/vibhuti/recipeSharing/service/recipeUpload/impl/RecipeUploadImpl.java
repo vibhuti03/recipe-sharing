@@ -3,7 +3,7 @@ package com.vibhuti.recipeSharing.service.recipeUpload.impl;
 import com.vibhuti.recipeSharing.entity.RecipeEntity;
 import com.vibhuti.recipeSharing.entity.TagsEntity;
 import com.vibhuti.recipeSharing.repositories.RecipeRepository;
-import com.vibhuti.recipeSharing.repositories.RecipeTagsRepository;
+import com.vibhuti.recipeSharing.repositories.TagsRepository;
 import com.vibhuti.recipeSharing.service.recipeUpload.RecipeUpload;
 import com.vibhuti.recipeSharing.utils.FileUploadUtils;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class RecipeUploadImpl implements RecipeUpload {
     private final RecipeRepository recipeRepository;
 
     @Autowired
-    private final RecipeTagsRepository recipeTagsRepository;
+    private final TagsRepository tagsRepository;
 
     @Override
     public RecipeEntity saveRecipe(String recipeName, List<String> recipeTags, MultipartFile recipeFile) throws IOException {
@@ -37,11 +37,11 @@ public class RecipeUploadImpl implements RecipeUpload {
         Set<TagsEntity> recipeTagsEntitySet = new HashSet<>();
 
         for (String tag : recipeTags) {
-            Optional<TagsEntity> tagPresent = recipeTagsRepository.findByTagName(tag);
+            Optional<TagsEntity> tagPresent = tagsRepository.findByTagName(tag);
             if (tagPresent.isPresent()) {
                 recipeTagsEntitySet.add(tagPresent.get());
             } else {
-                TagsEntity recipeTagsEntity = recipeTagsRepository.save(TagsEntity.builder()
+                TagsEntity recipeTagsEntity = tagsRepository.save(TagsEntity.builder()
                         .tagName(tag)
                         .build());
                 recipeTagsEntitySet.add(recipeTagsEntity);
