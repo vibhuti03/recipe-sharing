@@ -1,77 +1,33 @@
 package com.vibhuti.recipeSharing.controller;
 
 import com.vibhuti.recipeSharing.entity.RecipeEntity;
-import com.vibhuti.recipeSharing.entity.TagsEntity;
-import com.vibhuti.recipeSharing.repositories.RecipeRepository;
-import com.vibhuti.recipeSharing.repositories.RecipeTagsRepository;
-import com.vibhuti.recipeSharing.utils.FileUploadUtils;
+import com.vibhuti.recipeSharing.service.recipeUpload.RecipeUpload;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
 public class RecipeController {
-
     @Autowired
-    private final RecipeRepository recipeRepository;
-
-    @Autowired
-    private final RecipeTagsRepository recipeTagsRepository;
-    private final String uploadDir = "/Volumes/SanDisk1/Learnings/recipes/";
-
+    private final RecipeUpload recipeUpload;
     @PostMapping("recipe-intake")
     public ResponseEntity<Object> recipeIntake(
 //            @RequestParam RecipeEntity recipe,
                                                 @RequestParam("recipeName") String recipeName,
                                                @RequestParam("recipeTags") List<String> recipeTags,
                                                @RequestParam("recipe") MultipartFile recipeFile) throws IOException {
-        String fileName = System.currentTimeMillis() + recipeFile.getOriginalFilename();
-        FileUploadUtils.saveFile(uploadDir, fileName, recipeFile);
 
-        Set<TagsEntity> recipeTagsEntitySet = new HashSet<TagsEntity>();
-        for (String tags : recipeTags) {
-            TagsEntity recipeTagsEntity = TagsEntity.builder()
-                    .tagName(tags)
-                    .build();
-            recipeTagsEntitySet.add(recipeTagsEntity);
-        }
-
-        RecipeEntity recipe = RecipeEntity.builder()
-                .recipeName(recipeName)
-                .recipeFileLocation(uploadDir+fileName)
-                .tags(recipeTagsEntitySet)
-                .build();
-
-        RecipeEntity savedRecipe = recipeRepository.save(recipe);
-
-//        Set<TagsEntity> recipeTagsEntitySet = new HashSet<TagsEntity>();
-//
-//        RecipeEntity recipe = recipeRepository.save(RecipeEntity.builder()
-//                .recipeName(recipeName)
-//                .recipeFileLocation(uploadDir + fileName)
-//                .build());
-//
-//        for (String tags : recipeTags) {
-//            TagsEntity recipeTagsEntity = recipeTagsRepository.save(TagsEntity.builder()
-//                    .tagName(tags)
-//                    .recipe(recipe)
-//                    .build());
-//            recipeTagsEntitySet.add(recipeTagsEntity);
-//        }
-//
-//        recipe.setRecipeTags(recipeTagsEntitySet);
-
-
+        RecipeEntity savedRecipe = recipeUpload.saveRecipe(recipeName, recipeTags, recipeFile);
         if(savedRecipe!=null){
             return ResponseEntity.accepted().body("Recipe Uploaded");
         }
