@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "60fbf79d-b642-4fda-ade9-6b05f031ffde",
+		"name": "Recipe Sharing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21114780"
+	},
+	"item": [
+		{
+			"name": "Recipe File by Recipe name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/recipe/banana",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"recipe",
+						"banana"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recipe names by tag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/request-recipe/tag/apple",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"request-recipe",
+						"tag",
+						"apple"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Recipe names",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/available-recipes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"available-recipes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload recipe",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "recipeName",
+							"value": "Pasta Salad",
+							"type": "text"
+						},
+						{
+							"key": "recipeTags",
+							"value": "Pasta, Salad, Peas, Healthy, Olive Oil",
+							"type": "text"
+						},
+						{
+							"key": "recipe",
+							"type": "file",
+							"src": "/Users/vibhuti03/Desktop/Pasta Salad.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/recipe-intake",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"recipe-intake"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
