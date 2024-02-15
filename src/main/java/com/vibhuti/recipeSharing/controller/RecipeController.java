@@ -25,7 +25,7 @@ public class RecipeController {
 
     @Autowired
     private final FetchRecipe fetchRecipe;
-    @PostMapping("recipe-intake")
+    @PostMapping("/recipe-intake")
     public ResponseEntity<Object> recipeIntake(@RequestParam("recipeName") String recipeName,
                                                @RequestParam("recipeTags") List<String> recipeTags,
                                                @RequestParam("recipe") MultipartFile recipeFile) throws IOException {
@@ -38,13 +38,13 @@ public class RecipeController {
 
     }
 
-    @GetMapping("available-recipes")
+    @GetMapping("/available-recipes")
     public ResponseEntity<List<String>> availableRecipes(){
         List<String> recipeNames = fetchRecipe.fetchAllRecipe();
         return ResponseEntity.ok().body(recipeNames);
     }
 
-    @GetMapping("request-recipe/tag/{recipeTag}")
+    @GetMapping("/request-recipe/tag/{recipeTag}")
     public ResponseEntity<List<String>> recipesByTag(@PathVariable String recipeTag){
         List<String> recipeNames = fetchRecipe.fetchRecipesByTag(recipeTag);
         return ResponseEntity.ok().body(recipeNames);
